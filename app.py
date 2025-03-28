@@ -1,16 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from config import Config
 from flask_cors import CORS
+from flask_migrate import Migrate  # ✅ Import Flask-Migrate
+from config import Config
 
+# Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+app.config.from_object(Config)  # ✅ Load database config
+CORS(app)  # ✅ Enable CORS
 
-app.config.from_object(Config)
-
-# Import db after app is created
-from models import db
-db.init_app(app)
+# Initialize Database
+from models import db  # ✅ Import db correctly
+db.init_app(app)  # ✅ Initialize db
+migrate = Migrate(app, db)  # ✅ Initialize Flask-Migrate
 
 # Now import utils
 from utils import convert_measurement
@@ -29,19 +31,18 @@ def convert():
     # Extract parameters
     ingredient_name = data.get("ingredient")
     amount = data.get("amount")
-    from_unit = data.get("from_unit")
-    to_unit = data.get("to_unit")
+    unit = data.get("unit")  # ✅ Changed to match frontend
 
     # Validate required fields
-    if not ingredient_name or amount is None or not from_unit or not to_unit:
+    if not ingredient_name or amount is None or not unit:
         return jsonify({"error": "Missing required fields"}), 400
 
     # Perform the actual measurement conversion
-    result = convert_measurement(ingredient_name, amount, from_unit, to_unit)
+    result = convert_measurement(ingredient_name, amount, unit)
 
     return jsonify(result)
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        db.create_all()  # ✅ Ensure tables are created
     app.run(debug=True)
