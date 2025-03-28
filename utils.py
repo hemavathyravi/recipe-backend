@@ -1,16 +1,3 @@
-"""from models import db, Ingredient
-
-def convert_measurement(ingredient_name, quantity):
-    ingredient = Ingredient.query.filter_by(name=ingredient_name).first()
-    if not ingredient:
-        return {"error": "Ingredient not found"}
-
-    weight = quantity * ingredient.density * 236.588  # Convert cups to grams
-    return {"ingredient": ingredient_name, "grams": round(weight, 2)}
-"""
-
-# utils.py
-
 # Ingredient density lookup table (grams per cup)
 INGREDIENT_DENSITIES = {
     "flour": 120,  # 1 cup = 120g
@@ -66,4 +53,3 @@ def convert_measurement(ingredient, amount, from_unit, to_unit):
         return {"error": "Invalid target unit"}
 
     return {"converted_amount": round(converted_amount, 2)}
-
